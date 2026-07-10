@@ -1,16 +1,23 @@
 # Stock Research Assistant
 
-An AI-powered stock research platform that runs entirely locally at zero cost. It pulls
-stock price data and news, computes technical indicators, and uses a local LLM (via
-[Ollama](https://ollama.com)) to generate sentiment classification and full research reports.
+## Live Demo
 
-No paid APIs, no API keys, no cloud costs — everything runs on your machine.
+- **Frontend:** https://ai-stock-research-eta.vercel.app
+- **Backend API:** https://rajaaryaanhumayunsarfraz-6e17wizr.b4a.run
+- **GitHub:** https://github.com/Aryaan-Humayun/AI_Stock_Research-
+
+An AI-powered stock research platform deployed at zero cost. It pulls stock price data and
+news, computes technical indicators, and uses AI (via OpenRouter cloud or local Ollama) to
+generate sentiment classification and full research reports.
+
+No paid APIs, no credit card required. Deployed free on Vercel (frontend) and Back4App
+(backend).
 
 ## Tech Stack
 
 - **Backend:** Python, FastAPI, SQLAlchemy, SQLite
 - **Frontend:** React, Vite, Tailwind CSS (dark theme), Recharts
-- **LLM:** Local Ollama instance (`http://localhost:11434`)
+- **LLM:** OpenRouter free tier (`nvidia/nemotron-3-nano-30b-a3b:free`) for deployed app, Ollama for local development
 - **Data:** `yfinance` (stock prices/fundamentals), `gnews` (news)
 
 ## Features
