@@ -5,7 +5,28 @@ import SearchBar from "../components/SearchBar";
 import WatchlistCard from "../components/WatchlistCard";
 import Disclaimer from "../components/Disclaimer";
 
-const QUICK_ACCESS_TICKERS = ["AAPL", "MSFT", "TSLA", "GOOGL", "AMZN", "NVDA", "META"];
+const QUICK_ACCESS = [
+  { ticker: "AAPL", name: "Apple Inc." },
+  { ticker: "MSFT", name: "Microsoft Corporation" },
+  { ticker: "TSLA", name: "Tesla, Inc." },
+  { ticker: "GOOGL", name: "Alphabet Inc." },
+  { ticker: "AMZN", name: "Amazon.com, Inc." },
+  { ticker: "NVDA", name: "NVIDIA Corporation" },
+  { ticker: "META", name: "Meta Platforms, Inc." },
+];
+
+function Stat({ value, label }) {
+  return (
+    <div className="text-sm">
+      <span className="font-semibold text-white">{value}</span>{" "}
+      <span className="text-slate-500">{label}</span>
+    </div>
+  );
+}
+
+function StatDivider() {
+  return <div className="h-4 w-px bg-white/10" />;
+}
 
 export default function Dashboard() {
   const [watchlist, setWatchlist] = useState([]);
@@ -65,72 +86,146 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-5xl flex-col px-4 py-10">
-      <header className="mb-8 text-center sm:text-left">
-        <h1 className="text-4xl font-extrabold tracking-tight text-gray-100 sm:text-5xl">
-          Stock Research Assistant
-        </h1>
-        <p className="mt-2 text-sm text-gray-400">
-          AI-powered stock research, running entirely locally.
-        </p>
+    <div className="flex min-h-screen flex-col">
+      <header className="fixed inset-x-0 top-0 z-50 h-16 border-b border-white/[0.04] bg-[#0F1117]/70 backdrop-blur-xl">
+        <div className="mx-auto flex h-full max-w-5xl items-center justify-between px-4">
+          <div className="flex items-center">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 text-white">
+              ⚡
+            </div>
+            <span className="ml-2.5 bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-xl font-bold text-transparent">
+              StockAI
+            </span>
+            <span className="mx-3 hidden h-6 w-px bg-white/10 sm:inline-block" />
+            <span className="hidden text-sm font-medium uppercase tracking-wider text-slate-500 sm:inline">
+              Research Terminal
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs text-emerald-400">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+            </span>
+            Live
+          </div>
+        </div>
       </header>
 
-      <SearchBar onSearch={handleSearch} loading={searching} />
+      <section className="relative overflow-hidden pt-24">
+        <div className="pointer-events-none absolute -left-24 -top-48 h-[500px] w-[500px] animate-pulse-ring rounded-full bg-gradient-to-r from-blue-600/20 to-purple-600/20 blur-[120px]" />
+        <div
+          className="pointer-events-none absolute -top-24 right-0 h-[400px] w-[400px] animate-pulse-ring rounded-full bg-gradient-to-r from-purple-600/15 to-pink-600/15 blur-[100px]"
+          style={{ animationDelay: "1.5s" }}
+        />
 
-      <div className="mt-4 flex flex-wrap justify-center gap-2 sm:justify-start">
-        {QUICK_ACCESS_TICKERS.map((ticker) => (
-          <button
-            key={ticker}
-            onClick={() => handleSearch(ticker)}
-            disabled={searching}
-            className="rounded-full border border-gray-700 bg-gray-800 px-3 py-1.5 text-xs font-medium text-gray-300 transition hover:border-blue-500 hover:text-blue-400 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {ticker}
-          </button>
-        ))}
-      </div>
+        <div className="relative z-10 mx-auto max-w-3xl px-4 text-center">
+          <span className="fade-in-1 mb-6 inline-block rounded-full border border-blue-500/20 bg-blue-500/10 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-blue-400">
+            AI-Powered Research
+          </span>
 
-      {error && (
-        <div className="mt-4 rounded-lg border border-red-800 bg-red-900/30 px-4 py-3 text-sm text-red-300">
-          {error}
-        </div>
-      )}
+          <h1 className="fade-in-2 text-5xl font-bold leading-tight text-white">
+            Smarter Stock Research
+            <span className="block bg-gradient-to-r from-blue-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">
+              Powered by AI
+            </span>
+          </h1>
 
-      <section className="mt-10 flex-1">
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-200">Your Watchlist</h2>
-          {watchlist.length >= 3 && (
-            <button
-              onClick={handleClearWatchlist}
-              className="text-xs font-medium text-gray-500 transition hover:text-red-400"
-            >
-              Clear Watchlist
-            </button>
-          )}
-        </div>
+          <p className="fade-in-3 mx-auto mt-6 max-w-xl text-lg leading-relaxed text-slate-400">
+            Real-time market data, sentiment analysis, and AI-generated research reports. All in
+            one place, completely free.
+          </p>
 
-        {loadingWatchlist && (
-          <div className="flex justify-center py-10">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-700 border-t-blue-500" />
+          <div className="fade-in-4 relative mx-auto mt-10 max-w-2xl">
+            <SearchBar onSearch={handleSearch} loading={searching} />
           </div>
-        )}
 
-        {!loadingWatchlist && watchlist.length === 0 && (
-          <div className="rounded-xl border border-dashed border-gray-700 bg-gray-800/50 p-10 text-center text-gray-500">
-            Your watchlist is empty. Search for a stock above to get started.
-          </div>
-        )}
-
-        {!loadingWatchlist && watchlist.length > 0 && (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {watchlist.map((stock) => (
-              <WatchlistCard key={stock.ticker} stock={stock} onRemove={handleRemove} />
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
+            <span className="mr-2 self-center text-xs uppercase tracking-wider text-slate-500">
+              Popular:
+            </span>
+            {QUICK_ACCESS.map(({ ticker, name }) => (
+              <button
+                key={ticker}
+                title={name}
+                onClick={() => handleSearch(ticker)}
+                disabled={searching}
+                className="cursor-pointer rounded-full border border-white/[0.06] bg-white/[0.03] px-4 py-1.5 text-sm text-slate-400 transition-all duration-200 hover:border-white/[0.12] hover:bg-white/[0.08] hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {ticker}
+              </button>
             ))}
           </div>
-        )}
+
+          {error && (
+            <div className="mt-6 rounded-xl border border-accent-red/20 bg-accent-red/10 px-4 py-3 text-left text-sm text-red-300">
+              {error}
+            </div>
+          )}
+        </div>
       </section>
 
-      <Disclaimer />
+      <div className="mx-auto mt-12 flex max-w-5xl flex-wrap items-center justify-center gap-4 px-4 sm:gap-6">
+        <Stat value="220+" label="Stocks" />
+        <StatDivider />
+        <Stat value="Real-Time" label="Data" />
+        <StatDivider />
+        <Stat value="AI" label="Analysis" />
+        <StatDivider />
+        <Stat value="100%" label="Free" />
+      </div>
+
+      <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 pb-8 pt-10 sm:pb-10">
+        <section className="flex-1">
+          <div className="mb-4 flex items-center justify-between">
+            <div className="flex items-center">
+              <h2 className="text-xl font-semibold text-white">Your Portfolio</h2>
+              {watchlist.length > 0 && (
+                <span className="ml-2 rounded-full bg-white/10 px-2 py-0.5 text-xs text-slate-400">
+                  {watchlist.length}
+                </span>
+              )}
+            </div>
+            {watchlist.length >= 3 && (
+              <button
+                onClick={handleClearWatchlist}
+                className="text-xs text-slate-500 transition-colors hover:text-red-400"
+              >
+                Clear All
+              </button>
+            )}
+          </div>
+
+          {loadingWatchlist && (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {[0, 1, 2].map((i) => (
+                <div key={i} className="h-44 overflow-hidden rounded-2xl bg-surface-secondary">
+                  <div className="h-full w-full animate-shimmer bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                </div>
+              ))}
+            </div>
+          )}
+
+          {!loadingWatchlist && watchlist.length === 0 && (
+            <div className="glass flex flex-col items-center gap-3 rounded-2xl py-16 text-center">
+              <span className="text-4xl">📊</span>
+              <p className="text-lg font-medium text-white">Start Building Your Portfolio</p>
+              <p className="text-sm text-slate-400">Search for any stock above to add it here</p>
+              <span className="mt-2 animate-float text-2xl text-slate-600">↑</span>
+            </div>
+          )}
+
+          {!loadingWatchlist && watchlist.length > 0 && (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {watchlist.map((stock) => (
+                <WatchlistCard key={stock.ticker} stock={stock} onRemove={handleRemove} />
+              ))}
+            </div>
+          )}
+        </section>
+
+        <Disclaimer />
+      </div>
     </div>
   );
 }

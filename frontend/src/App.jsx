@@ -1,14 +1,18 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Dashboard from "./pages/Dashboard.jsx";
 import StockDetail from "./pages/StockDetail.jsx";
 
 function App() {
+  const location = useLocation();
+
   return (
-    <div className="min-h-screen text-gray-100">
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/stock/:ticker" element={<StockDetail />} />
-      </Routes>
+    <div className="min-h-screen text-text-primary">
+      <div key={location.pathname} className="animate-fade-in">
+        <Routes location={location}>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/stock/:ticker" element={<StockDetail />} />
+        </Routes>
+      </div>
     </div>
   );
 }

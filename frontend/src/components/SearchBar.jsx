@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import client from "../api/client";
 
-function SearchIcon() {
+function SearchIcon({ pulse }) {
   return (
     <svg
-      className="h-5 w-5 text-gray-500"
+      className={`h-5 w-5 text-blue-400/60 transition-transform ${pulse ? "animate-soft-pulse" : ""}`}
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
@@ -20,6 +20,7 @@ export default function SearchBar({ onSearch, loading }) {
   const [suggestions, setSuggestions] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const [focused, setFocused] = useState(false);
   const debounceRef = useRef(null);
   const containerRef = useRef(null);
 
@@ -88,10 +89,19 @@ export default function SearchBar({ onSearch, loading }) {
 
   return (
     <div ref={containerRef} className="relative w-full">
-      <form onSubmit={handleSubmit} className="flex w-full gap-2">
-        <div className="relative flex-1">
-          <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <SearchIcon />
+      <div
+        className={`pointer-events-none absolute inset-0 animate-gradient rounded-2xl bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-blue-500/20 blur-xl transition-opacity duration-500 ${
+          focused ? "opacity-100" : "opacity-0"
+        }`}
+      />
+      <form onSubmit={handleSubmit} className="relative z-10 flex w-full gap-3">
+        <div
+          className={`glass relative flex-1 rounded-2xl transition-all duration-300 ${
+            focused ? "glow-blue" : ""
+          }`}
+        >
+          <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+            <SearchIcon pulse={!focused && !value} />
           </span>
           <input
             type="text"
@@ -101,10 +111,14 @@ export default function SearchBar({ onSearch, loading }) {
               setShowDropdown(true);
               setHighlightedIndex(-1);
             }}
-            onFocus={() => setShowDropdown(true)}
+            onFocus={() => {
+              setFocused(true);
+              setShowDropdown(true);
+            }}
+            onBlur={() => setFocused(false)}
             onKeyDown={handleKeyDown}
             placeholder="Search by company name or ticker..."
-            className="w-full rounded-lg border border-gray-700 bg-gray-800 py-3 pl-11 pr-4 text-gray-100 placeholder-gray-500 outline-none focus:border-blue-500"
+            className="h-14 w-full rounded-2xl bg-transparent pl-12 pr-4 text-lg text-white placeholder-slate-500 outline-none"
             disabled={loading}
             autoComplete="off"
           />
@@ -112,30 +126,32 @@ export default function SearchBar({ onSearch, loading }) {
         <button
           type="submit"
           disabled={loading || !value.trim()}
-          className="rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-gray-700 disabled:text-gray-500"
+          className="rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 px-6 text-sm font-semibold text-white shadow-lg shadow-blue-500/20 transition-all duration-200 hover:from-blue-400 hover:to-blue-500 active:scale-95 disabled:cursor-not-allowed disabled:from-white/10 disabled:to-white/10 disabled:text-slate-500 disabled:shadow-none"
         >
           {loading ? "Searching..." : "Search"}
         </button>
       </form>
 
       {showDropdown && suggestions.length > 0 && (
-        <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-gray-700 bg-gray-800 shadow-xl">
+        <div className="glass absolute z-20 mt-2 w-full overflow-hidden rounded-2xl shadow-2xl">
           {suggestions.map((s, idx) => (
             <button
               key={s.ticker}
               type="button"
               onClick={() => runSearch(s.ticker)}
               onMouseEnter={() => setHighlightedIndex(idx)}
-              className={`flex w-full items-center justify-between gap-3 px-4 py-2.5 text-left transition ${
-                idx === highlightedIndex ? "bg-gray-700" : "hover:bg-gray-750"
+              className={`flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition-colors ${
+                idx === highlightedIndex ? "bg-white/10" : "hover:bg-white/5"
               }`}
             >
-              <div className="flex min-w-0 items-center gap-2">
-                <span className="font-bold text-gray-100">{s.ticker}</span>
-                <span className="truncate text-sm text-gray-400">{s.name}</span>
+              <div className="flex min-w-0 items-center gap-2.5">
+                <span className="font-bold text-white">{s.ticker}</span>
+                <span className="truncate text-sm text-slate-400">{s.name}</span>
               </div>
               {s.sector && (
-                <span className="flex-shrink-0 text-xs text-gray-500">{s.sector}</span>
+                <span className="flex-shrink-0 rounded-full bg-white/5 px-2 py-0.5 text-[10px] font-medium text-slate-500">
+                  {s.sector}
+                </span>
               )}
             </button>
           ))}

@@ -13,7 +13,7 @@ function formatNumber(value, opts = {}) {
 export default function FundamentalsGrid({ fundamentals }) {
   if (!fundamentals) {
     return (
-      <div className="rounded-xl border border-gray-700 bg-gray-800 p-4 text-gray-500">
+      <div className="rounded-2xl border border-white/5 bg-surface-secondary p-6 text-text-muted">
         No fundamental data available.
       </div>
     );
@@ -36,13 +36,15 @@ export default function FundamentalsGrid({ fundamentals }) {
   ];
 
   return (
-    <div className="rounded-xl border border-gray-700 bg-gray-800 p-4">
-      <h3 className="mb-4 text-sm font-semibold text-gray-300">Fundamentals</h3>
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+    <div className="rounded-2xl border border-white/5 bg-surface-secondary p-6">
+      <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold text-text-secondary">
+        <span>💰</span> Fundamentals
+      </h3>
+      <div className="grid grid-cols-2 gap-4">
         {items.map((item) => (
-          <div key={item.label} className="rounded-lg border border-gray-700 bg-gray-900 p-3">
-            <p className="text-xs text-gray-500">{item.label}</p>
-            <p className="mt-1 text-base font-semibold text-gray-100">{item.value}</p>
+          <div key={item.label}>
+            <p className="text-xs text-text-muted">{item.label}</p>
+            <p className="mt-1 text-lg font-bold text-white">{item.value}</p>
           </div>
         ))}
       </div>
