@@ -75,7 +75,7 @@ export default function StockDetail() {
       setReport(res.data);
       await loadStock();
     } catch (err) {
-      const detail = err.response?.data?.detail || "Analysis failed. Is Ollama running?";
+      const detail = err.response?.data?.detail || "The AI model may be temporarily unavailable. Try again in a minute.";
       setError(detail);
     } finally {
       setAnalyzing(false);

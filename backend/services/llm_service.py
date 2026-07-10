@@ -97,6 +97,8 @@ def _call_ollama(prompt: str, selected_model: str, format_json: bool) -> str:
 
 
 def _call_openrouter(prompt: str, selected_model: str, format_json: bool) -> str:
+    print(f"[OpenRouter] Calling model: {selected_model}")
+
     if not OPENROUTER_API_KEY:
         raise LLMServiceError(
             "OPENROUTER_API_KEY is not set. Add it to your .env file."

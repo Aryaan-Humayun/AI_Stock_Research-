@@ -22,7 +22,7 @@ OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "ollama").lower()
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
 OPENROUTER_URL = os.getenv("OPENROUTER_URL", "https://openrouter.ai/api/v1/chat/completions")
-OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL", "meta-llama/llama-3.3-70b-instruct:free")
+OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL", "nvidia/nemotron-3-nano-30b-a3b:free")
 OPENROUTER_FAST_MODEL = os.getenv("OPENROUTER_FAST_MODEL", OPENROUTER_MODEL)
 
 DB_PATH = os.getenv("DB_PATH", "data/stocks.db")
