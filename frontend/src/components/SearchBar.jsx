@@ -95,11 +95,7 @@ export default function SearchBar({ onSearch, loading }) {
         }`}
       />
       <form onSubmit={handleSubmit} className="relative z-10 flex w-full gap-3">
-        <div
-          className={`glass relative flex-1 rounded-2xl transition-all duration-300 ${
-            focused ? "glow-blue" : ""
-          }`}
-        >
+        <div className="glass relative flex-1 rounded-2xl border border-white/10 transition-all duration-300 hover:border-white/15 focus-within:border-blue-500/40 focus-within:shadow-[0_0_30px_rgba(59,130,246,0.15)]">
           <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
             <SearchIcon pulse={!focused && !value} />
           </span>
@@ -126,7 +122,7 @@ export default function SearchBar({ onSearch, loading }) {
         <button
           type="submit"
           disabled={loading || !value.trim()}
-          className="rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 px-6 text-sm font-semibold text-white shadow-lg shadow-blue-500/20 transition-all duration-200 hover:from-blue-400 hover:to-blue-500 active:scale-95 disabled:cursor-not-allowed disabled:from-white/10 disabled:to-white/10 disabled:text-slate-500 disabled:shadow-none"
+          className="rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 px-6 text-sm font-semibold text-white shadow-lg shadow-blue-500/20 transition-all duration-200 hover:from-blue-400 hover:to-blue-500 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {loading ? "Searching..." : "Search"}
         </button>

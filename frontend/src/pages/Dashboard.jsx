@@ -150,7 +150,7 @@ export default function Dashboard() {
                 title={name}
                 onClick={() => handleSearch(ticker)}
                 disabled={searching}
-                className="cursor-pointer rounded-full border border-white/[0.06] bg-white/[0.03] px-4 py-1.5 text-sm text-slate-400 transition-all duration-200 hover:border-white/[0.12] hover:bg-white/[0.08] hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                className="cursor-pointer rounded-full border border-white/[0.08] bg-white/[0.05] px-4 py-1.5 text-sm text-slate-300 transition-all duration-200 hover:border-blue-500/30 hover:bg-blue-500/10 hover:text-blue-400 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {ticker}
               </button>
