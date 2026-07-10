@@ -1,57 +1,56 @@
 # Deploying Stock Research Assistant
 
-This guide deploys the backend (FastAPI) to **Render** and the frontend
-(React/Vite) to **Vercel**.
+The backend (FastAPI) is deployed as a Docker container to **Back4App**, and
+the frontend (React/Vite) deploys to **Vercel**.
 
-Since Render's servers can't reach a local Ollama instance running on your
-machine, the deployed backend must use **OpenRouter** as its LLM provider —
-this is already the default in `render.yaml`. Local development can still use
-Ollama as before; only the deployed backend is affected.
+**Live backend:** `https://rajaaryaanhumayunsarfraz-6e17wizr.b4a.run`
+
+Since the hosted backend can't reach a local Ollama instance running on your
+machine, it runs with **OpenRouter** as its LLM provider instead. Local
+development can still use Ollama as before; only the deployed backend is
+affected.
+
+> A `render.yaml` is also kept in this repo as an alternative path if you
+> ever want to deploy the same Dockerfile to Render instead — see the
+> "Alternative: Render" section at the bottom. It's not currently used.
 
 ## 1. Push code to GitHub
 
 ```bash
 git add .
-git commit -m "Add deployment config for Render + Vercel"
+git commit -m "your message"
 git push origin main
 ```
 
 Make sure `.env` is **not** committed — it's already in `.gitignore`. Only
 `.env.example` should be tracked.
 
-## 2. Backend — deploy to Render
+## 2. Backend — deploy to Back4App
 
-1. Go to [render.com](https://render.com) and sign in.
-2. Click **New +** → **Web Service**.
-3. Connect your GitHub account and select this repository.
-4. Render should detect `render.yaml` and offer to use it as a Blueprint —
-   accept it. If it doesn't auto-detect, configure manually:
-   - **Runtime**: Docker
-   - **Dockerfile path**: `./Dockerfile`
-   - **Plan**: Free
-5. Under **Environment**, set these variables (some are pre-filled by
-   `render.yaml`, but the two marked "manual" below only exist as empty
-   placeholders in the file and must be filled in yourself in the dashboard —
-   they're intentionally excluded from the committed file):
-   - `LLM_PROVIDER=openrouter` (pre-filled)
-   - `OPENROUTER_MODEL=nvidia/nemotron-3-nano-30b-a3b:free` (pre-filled)
-   - `OPENROUTER_FAST_MODEL=nvidia/nemotron-3-nano-30b-a3b:free` (pre-filled)
-   - `OPENROUTER_API_KEY=<your key>` (**manual** — get one at
-     [openrouter.ai/keys](https://openrouter.ai/keys))
-   - `FRONTEND_ORIGIN=<your Vercel URL>` (**manual** — you won't know this
-     until step 3 is done; see the note at the end of this guide)
-6. Click **Deploy**. First build takes a few minutes.
-7. Once live, note your backend URL — something like
-   `https://stock-research-api.onrender.com`.
-8. Sanity check: visit `https://stock-research-api.onrender.com/api/health`
-   and confirm you get back `{"status":"ok", ...}`.
+1. Go to [back4app.com](https://back4app.com) and sign in.
+2. Create a new **Container** app (Back4App's Docker/Containers-as-a-Service
+   product) and connect your GitHub repo.
+3. Point it at the repo root, where `Dockerfile` lives — it builds and runs
+   the image directly, same as any standard Docker deployment (installs
+   `requirements.txt`, copies `backend/` and `data/` in flat, runs
+   `uvicorn main:app --host 0.0.0.0 --port 8000`).
+4. In the app's environment variable settings, set:
+   - `LLM_PROVIDER=openrouter`
+   - `OPENROUTER_MODEL=nvidia/nemotron-3-nano-30b-a3b:free`
+   - `OPENROUTER_FAST_MODEL=nvidia/nemotron-3-nano-30b-a3b:free`
+   - `OPENROUTER_API_KEY=<your key>` — get one at
+     [openrouter.ai/keys](https://openrouter.ai/keys)
+   - `FRONTEND_ORIGIN=<your Vercel URL>` (you won't know this until step 3 is
+     done — come back and set it; see step 4 below)
+5. Deploy. Back4App assigns a public URL on the `.b4a.run` domain.
+6. Sanity check:
+   `curl https://rajaaryaanhumayunsarfraz-6e17wizr.b4a.run/api/health`
+   should return `{"status":"ok", "database_connected":true, ...}`.
 
-**Free tier note:** Render's free web services spin down after 15 minutes of
-inactivity and take ~30-60 seconds to cold-start on the next request — the
-first request after idle time will be slow. The filesystem is also
-ephemeral, so the SQLite database (watchlist, cached prices/news) resets on
-every redeploy or restart. This is fine for a demo; for persistence you'd
-need Render's paid disk add-on or an external database.
+**Note on persistence:** container filesystems on most free-tier container
+hosts (Back4App included) are typically ephemeral — the SQLite database
+(watchlist, cached prices/news) may reset on redeploy or restart. Fine for a
+demo; for durable storage you'd want an external database.
 
 ## 3. Frontend — deploy to Vercel
 
@@ -61,21 +60,21 @@ need Render's paid disk add-on or an external database.
    - **Root Directory**: `frontend`
    - Vercel should auto-detect the Vite framework preset.
 4. Under **Environment Variables**, add:
-   - `VITE_API_URL=https://stock-research-api.onrender.com/api`
-     (use your actual Render URL from step 2, keep the `/api` suffix)
+   - `VITE_API_URL=https://rajaaryaanhumayunsarfraz-6e17wizr.b4a.run/api`
+     (keep the `/api` suffix)
 5. Click **Deploy**.
 6. Once live, note your Vercel URL — something like
    `https://stock-research-assistant.vercel.app`.
 
-## 4. Close the loop: set FRONTEND_ORIGIN on Render
+## 4. Close the loop: set FRONTEND_ORIGIN on Back4App
 
 The backend's CORS policy only allows requests from origins it's explicitly
 told about. Now that you have your real Vercel URL:
 
-1. Go back to your Render service → **Environment**.
+1. Go back to your Back4App container app's environment variables.
 2. Set `FRONTEND_ORIGIN` to your Vercel URL from step 3 (e.g.
    `https://stock-research-assistant.vercel.app` — no trailing slash).
-3. Save — Render will automatically redeploy with the new value.
+3. Save/redeploy so the new value takes effect.
 
 Skipping this step means the deployed frontend's API calls will fail with
 CORS errors in the browser console, even though both services are individually
@@ -92,5 +91,16 @@ up and healthy.
    if it fails, and retry after a short wait).
 
 If step 2 or 3 fails, open the browser devtools console first — a CORS error
-means step 4 above wasn't completed; a network error/timeout means the Render
-service may still be cold-starting.
+means step 4 above wasn't completed; a network error/timeout means the
+backend may still be cold-starting.
+
+## Alternative: Render
+
+This repo also includes a `render.yaml` Blueprint for deploying the same
+Dockerfile to [Render](https://render.com) instead of Back4App, if you ever
+want to switch or run a second environment. It's configured with the same
+`nvidia/nemotron-3-nano-30b-a3b:free` model; `OPENROUTER_API_KEY` and
+`FRONTEND_ORIGIN` are marked `sync: false` so they must be entered manually in
+Render's dashboard rather than committed to the file. The steps mirror
+sections 2 and 4 above, just in Render's UI (New Web Service → connect repo →
+it should auto-detect `render.yaml`).
