@@ -1,0 +1,11 @@
+node_modules/
+__pycache__/
+*.pyc
+.env
+data/stocks.db
+venv/
+.venv/
+dist/
+.vercel/
+.DS_Store
+*.log
